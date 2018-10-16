@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native'
-import { DECKS_STORAGE_KEY, formatDeck } from './_decks'
+import { DECKS_STORAGE_KEY, formatDeck } from './helpers'
 
 export const saveDeckTitle = async (deckTitle) => {
   const formatedDeck = formatDeck(deckTitle)

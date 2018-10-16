@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
+import { clearLocalNotification, setLocalNotification } from '../utils/helpers'
 import TextButton from './TextButton'
 
 class Quiz extends Component {
@@ -43,20 +44,23 @@ class Quiz extends Component {
     </View>
   )
 
-  renderScore = () => (
-    <View>
-      <Text>Correct Answers: {this.state.correctAnswers}</Text>
-      <Text>Incorrect Answers: {this.state.incorrectAnswers}</Text>
-      <Text>Total Score: {(this.state.correctAnswers / this.props.deck.questions.length * 100).toFixed(2)}%</Text>
-      <TextButton onPress={this.reset} >
-        Take it again!
-      </TextButton>
-      <TextButton onPress={() => this.props.navigation.navigate('Deck', { deckId: this.props.deckId })} >
-        Back To Deck
-      </TextButton>
-    </View>
-  )
-
+  renderScore = () => {
+    clearLocalNotification()
+      .then(setLocalNotification())
+    return (
+      <View>
+        <Text>Correct Answers: {this.state.correctAnswers}</Text>
+        <Text>Incorrect Answers: {this.state.incorrectAnswers}</Text>
+        <Text>Total Score: {(this.state.correctAnswers / this.props.deck.questions.length * 100).toFixed(2)}%</Text>
+        <TextButton onPress={this.reset} >
+          Take it again!
+        </TextButton>
+        <TextButton onPress={() => this.props.navigation.navigate('Deck', { deckId: this.props.deckId })} >
+          Back To Deck
+        </TextButton>
+      </View>
+    )
+  }
   incrementAnswers = (key) => {
     this.toggleShowAnswer()
     this.setState((state) => ({
