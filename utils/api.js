@@ -13,10 +13,13 @@ export const saveDeckTitle = async (deckTitle) => {
 
 export const getDecks = async (id) => {
   try {
-    const decks = AsyncStorage.getItem(DECKS_STORAGE_KEY)
-    return typeof id === 'undefined'
-      ? decks
-      : decks[id]
+    AsyncStorage.getItem(DECKS_STORAGE_KEY)
+      .then (data => {
+        const decks = JSON.parse(data)
+        return typeof id === 'undefined'
+        ? decks
+        : decks[id]
+      })
   } catch (error) {
     console.warn('Error getting decks: ', error)
   }

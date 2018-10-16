@@ -20,7 +20,10 @@ class Deck extends Component {
   }
 
   handleStartQuiz = () => {
-
+    this.props.navigation.navigate(
+      'Quiz',
+      { deckId: this.props.deckId}
+    )
   }
 
   render() {
