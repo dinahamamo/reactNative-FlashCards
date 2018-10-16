@@ -1,30 +1,30 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, KeyboardAvoidingView } from 'react-native'
+import { Text, KeyboardAvoidingView } from 'react-native'
 import { connect } from 'react-redux'
 // Components
 import InputField from './InputField'
-import SubmitButton from './SubmitButton'
+import TextButton from './TextButton'
 
-import { getDecks } from '../utils/helpers'
-import { submitNewDeck } from '../utils/api'
+import { saveDeckTitle } from '../utils/api'
 import { addNewDeck } from '../actions'
 
 class NewDeck extends Component {
   state = {
-    title: '',
-    questions: []
+    title: ''
   }
 
   addDeck = () => {
-    const key = this.state.title
-    const newDeck = this.state
-    submitNewDeck({ key, newDeck })
+    const newDeckTitle = this.state.title
+    saveDeckTitle(newDeckTitle)
       .then((formatedDeck) => {
         this.props.dispatch(addNewDeck(formatedDeck))
         this.setState(() => ({
           title: ''
         }))
-        // Navigate To Deck page
+        this.props.navigation.navigate(
+          'Deck',
+          { deckId: newDeckTitle }
+        )
       })
   }
 
@@ -33,7 +33,9 @@ class NewDeck extends Component {
       <KeyboardAvoidingView behavior="padding" style={{padding: 40}}>
         <Text>What is the title of your new deck?</Text>
         <InputField value={this.state.title} handleChange={(title) => this.setState({title})}/>
-        <SubmitButton component={'Deck'} onPress={this.addDeck} isDisabled={this.state.title.length === 0}/>
+        <TextButton onPress={this.addDeck} isDisabled={this.state.title.length === 0}>
+          Add Deck
+        </TextButton>
       </KeyboardAvoidingView>
     )
   }

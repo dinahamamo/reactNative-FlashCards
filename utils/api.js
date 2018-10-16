@@ -1,8 +1,8 @@
 import { AsyncStorage } from 'react-native'
-import { DECKS_STORAGE_KEY } from './_decks'
+import { DECKS_STORAGE_KEY, formatDeck } from './_decks'
 
-export const submitNewDeck = async ({ key, newDeck }) => {
-  const formatedDeck = {[key]: newDeck}
+export const saveDeckTitle = async (deckTitle) => {
+  const formatedDeck = formatDeck(deckTitle)
   try {
     AsyncStorage.mergeItem(DECKS_STORAGE_KEY, JSON.stringify(formatedDeck))
     return formatedDeck
@@ -11,6 +11,27 @@ export const submitNewDeck = async ({ key, newDeck }) => {
   }
 }
 
-export function getAllDecks() {
-  return AsyncStorage.getItem(DECKS_STORAGE_KEY)
+export const getDecks = async (id) => {
+  try {
+    const decks = AsyncStorage.getItem(DECKS_STORAGE_KEY)
+    return typeof id === 'undefined'
+      ? decks
+      : decks[id]
+  } catch (error) {
+    console.warn('Error getting decks: ', error)
+  }
+}
+
+export const addCardToDeck = async (deckTitle, newCard) => {
+    try { AsyncStorage.getItem(DECKS_STORAGE_KEY)
+      .then(data => {
+        const decks = JSON.parse(data)
+        const updatedQuestions = decks[deckTitle].questions.concat([newCard])
+        const formatedDeck = formatDeck(deckTitle, updatedQuestions)
+        AsyncStorage.mergeItem(DECKS_STORAGE_KEY, JSON.stringify(formatedDeck))
+        return formatedDeck
+      })
+    } catch ( error ) {
+      console.warn('Error adding card: ', error)
+    }
 }
