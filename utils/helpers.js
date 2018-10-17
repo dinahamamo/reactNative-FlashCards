@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native'
-import { Notifications, Permissions } from 'expo'
+import { Notifications, Permissions, Constants } from 'expo'
 
 export const DECKS_STORAGE_KEY = 'FlashCards:decks'
 const NOTIFICATION_KEY = 'FlashCards:notifications'
@@ -40,8 +40,8 @@ export function setLocalNotification() {
     .then((data) => {
       if (data === null) {
         Permissions.askAsync(Permissions.NOTIFICATIONS)
-          .then(({ status }) => {
-            if (status === 'granted') {
+          .then((results) => {
+            if (Constants.lisDevice && results.status === 'granted') {
               Notifications.cancelAllScheduledNotificationsAsync()
 
               let tomorrow = new Date()
