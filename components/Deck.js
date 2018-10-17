@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { Text, Animated } from 'react-native'
 import { connect } from 'react-redux'
 
 import TextButton from './TextButton'
+import { commonStyles } from '../utils/styles'
+import { green, white, black } from '../utils/colors'
 
 class Deck extends Component {
+  state = {
+    opacity: new Animated.Value(0)
+  }
+
   static navigationOptions = ({ navigation }) => {
     const { deckId } = navigation.state.params
     return {
@@ -27,21 +33,38 @@ class Deck extends Component {
   }
 
   render() {
-    const { deckId, deck } = this.props
+    const { deck } = this.props
+    const { opacity } = this.state
+    Animated.timing(opacity, { toValue: 1, duration: 1000 }).start()
+
     return (
-      <View style={{padding: 40}}>
-        <Text>{deck.title}</Text>
+      <Animated.View
+        style={[
+          commonStyles.darkBackground,
+          commonStyles.center,
+          {padding: 20, opacity}]}
+        >
+        <Text style={[commonStyles.cardHeader, {color: white, marginBottom: 10}]}>{deck.title}</Text>
         {deck.questions.length > 0
-          ? <Text>{deck.questions.length} cards</Text>
-          : <Text>There are no cards in this deck, feel free to add now!</Text>
+          ? <Text style={[commonStyles.cardSubHeader, {marginBottom: 50}]}>({deck.questions.length} cards)</Text>
+          : <Text style={[commonStyles.cardSubHeader, {marginBottom: 50}]}>There are no cards, feel free to add now!</Text>
         }
-        <TextButton onPress={this.handleAddCard}>
+        <TextButton
+          onPress={this.handleAddCard}
+          color={green}
+          borderColor={green}
+          >
           Add Card
         </TextButton>
-        <TextButton onPress={this.handleStartQuiz} isDisabled={deck.questions.length === 0}>
+        <TextButton
+          onPress={this.handleStartQuiz}
+          isDisabled={deck.questions.length === 0}
+          color={black}
+          borderColor={green}
+          backgroundColor={green}>
           Start Quiz
         </TextButton>
-      </View>
+      </Animated.View>
     )
   }
 }

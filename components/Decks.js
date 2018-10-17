@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { AppLoading } from 'expo'
-
-import { getDecks } from '../utils/api'
 import { receiveDecks } from '../actions'
+import { getDecks } from '../utils/api'
+import { commonStyles } from '../utils/styles'
+import { green } from '../utils/colors'
 
 class Decks extends Component {
   state = {
@@ -19,9 +20,9 @@ class Decks extends Component {
   renderItem = ({ item }) => {
     const { decks } = this.props
     return (
-      <TouchableOpacity onPress={() => this.viewDeck(item)}>
-        <Text>{decks[item].title}</Text>
-        <Text>{decks[item].questions.length} Cards</Text>
+      <TouchableOpacity onPress={() => this.viewDeck(item)} style={styles.card}>
+        <Text style={commonStyles.cardHeader}>{decks[item].title}</Text>
+        <Text style={commonStyles.cardSubHeader}>({decks[item].questions.length} Cards)</Text>
       </TouchableOpacity>
     )
   }
@@ -43,14 +44,32 @@ class Decks extends Component {
     }
 
     return(
-      <View style={{padding: 40, flex: 1}}>
+      <View style={[commonStyles.darkBackground, commonStyles.center, {padding: 20}]}>
         {deckKeys.length > 0
-          ? <FlatList data={deckKeys} renderItem={this.renderItem} />
-          : <Text>No Decks!</Text>}
+          ? <FlatList
+              data={deckKeys}
+              renderItem={this.renderItem}
+              keyExtractor={item => item}
+              style={styles.list}/>
+          : <Text style={[commonStyles.header, {color: green}]}>No Decks!</Text>}
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  list: {
+    alignSelf: 'flex-start',
+    marginTop: 50,
+    width: '100%'
+  },
+  card: {
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 10,
+    backgroundColor: '#1A1B25'
+  }
+})
 
 function mapStateToProps(decks) {
   return {

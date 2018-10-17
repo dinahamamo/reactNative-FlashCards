@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { clearLocalNotification, setLocalNotification } from '../utils/helpers'
 import TextButton from './TextButton'
+import { commonStyles } from '../utils/styles'
+import { pink, black, green, white } from '../utils/colors'
 
 class Quiz extends Component {
   state = {
@@ -20,25 +22,52 @@ class Quiz extends Component {
   }
 
   renderQuestion = (index, deck) => (
-    <View>
-      <Text>{index + 1} / {deck.questions.length}</Text>
-      <Text>{deck.questions[index].question}</Text>
-      <TextButton onPress={this.toggleShowAnswer}>
+    <View style={styles.wrapper}>
+      <Text style={[commonStyles.cardSubHeader, {marginBottom: 10}]}>
+        {index + 1} / {deck.questions.length}
+      </Text>
+      <Text style={[commonStyles.cardHeader, {marginBottom: 40}]}>
+        {deck.questions[index].question}
+      </Text>
+      <TextButton
+        onPress={this.toggleShowAnswer}
+        color={white}
+        backgroundColor={'transparent'}
+        borderColor={'transparent'}>
         Show Answer
       </TextButton>
     </View>
   )
 
   renderAnswer = (index, deck) => (
-    <View>
-      <Text>{deck.questions[index].answer}</Text>
-      <TextButton onPress={this.toggleShowAnswer}>
+    <View style={styles.wrapper}>
+      <Text style={[commonStyles.cardSubHeader, {marginBottom: 10}]}>
+        {index + 1} / {deck.questions.length}
+      </Text>
+      <Text style={[commonStyles.cardHeader, {marginBottom: 40}]}>
+        {deck.questions[index].answer}
+      </Text>
+      <TextButton
+        onPress={this.toggleShowAnswer}
+        color={white}
+        backgroundColor={'transparent'}
+        borderColor={'transparent'}
+        >
         Show Question
       </TextButton>
-      <TextButton onPress={() => this.incrementAnswers('correctAnswers')} >
+      <TextButton
+        onPress={() => this.incrementAnswers('correctAnswers')}
+        color={black}
+        backgroundColor={green}
+        borderColor={green}
+        >
         Correct
       </TextButton>
-      <TextButton onPress={() => this.incrementAnswers('incorrectAnswers')} >
+      <TextButton
+        onPress={() => this.incrementAnswers('incorrectAnswers')}
+        color={white}
+        backgroundColor={pink}
+        borderColor={pink}>
         Incorrect
       </TextButton>
     </View>
@@ -48,14 +77,27 @@ class Quiz extends Component {
     clearLocalNotification()
       .then(setLocalNotification())
     return (
-      <View>
-        <Text>Correct Answers: {this.state.correctAnswers}</Text>
-        <Text>Incorrect Answers: {this.state.incorrectAnswers}</Text>
-        <Text>Total Score: {(this.state.correctAnswers / this.props.deck.questions.length * 100).toFixed(2)}%</Text>
-        <TextButton onPress={this.reset} >
+      <View style={styles.wrapper}>
+        <Text style={[commonStyles.cardSubHeader, {marginBottom: 5}]}>
+          Correct Answers: {this.state.correctAnswers}
+        </Text>
+        <Text style={[commonStyles.cardSubHeader, {marginBottom: 5}]}>
+          Incorrect Answers: {this.state.incorrectAnswers}
+        </Text>
+        <Text style={[commonStyles.cardHeader, {marginBottom: 40}]}>
+          Total Score: {(this.state.correctAnswers / this.props.deck.questions.length * 100).toFixed()}%
+        </Text>
+        <TextButton
+          onPress={this.reset}
+          color={green}
+          borderColor={green}>
           Take it again!
         </TextButton>
-        <TextButton onPress={() => this.props.navigation.navigate('Deck', { deckId: this.props.deckId })} >
+        <TextButton
+          onPress={() => this.props.navigation.navigate('Deck', { deckId: this.props.deckId })}
+          color={black}
+          backgroundColor={green}
+          borderColor={green}>
           Back To Deck
         </TextButton>
       </View>
@@ -90,7 +132,7 @@ class Quiz extends Component {
     const { deck } = this.props
     const { questionIndex, showAnswer } = this.state
     return (
-      <View>
+      <View style={[commonStyles.darkBackground, {padding: 30, flex: 1}]}>
         { showAnswer === false
           ?  questionIndex < deck.questions.length
             ? this.renderQuestion(questionIndex, deck)
@@ -101,6 +143,14 @@ class Quiz extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }
+})
 
 function mapStateToProps(state, {navigation}) {
   const { deckId } = navigation.state.params
